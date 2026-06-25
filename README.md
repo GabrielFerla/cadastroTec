@@ -15,10 +15,12 @@ API REST desacoplada para um ERP de estoque: cadastro de **produtos**, registro 
 
 ```
 cadastro/
-├── docker-compose.yml      # backend + mysql (frontend Vue: fase seguinte)
-└── backend/                # API Laravel
-    ├── Dockerfile
-    └── entrypoint.sh
+├── docker-compose.yml      # backend + frontend + mysql
+├── backend/                # API Laravel
+│   ├── Dockerfile
+│   └── entrypoint.sh
+└── frontend/               # SPA Vue 3 + Vite + Tailwind
+    └── Dockerfile
 ```
 
 ## Como rodar
@@ -29,8 +31,9 @@ Pré-requisito: Docker + Docker Compose.
 docker compose up --build
 ```
 
-Isso sobe **MySQL** (cria o schema `erp_estoque`) e o **backend**, que aguarda o banco ficar saudável, aplica as migrations e sobe a API.
+Isso sobe **MySQL** (cria o schema `erp_estoque`), o **backend** (aguarda o banco, aplica as migrations e sobe a API) e o **frontend** (Vite dev server).
 
+- Frontend: **http://localhost:5173**
 - API: **http://localhost:8000/api**
 - Healthcheck: http://localhost:8000/up
 - MySQL exposto no host em **localhost:3307** (interno: `mysql:3306`) — porta 3307 para não colidir com um MySQL local na 3306.
@@ -128,8 +131,22 @@ docker compose exec backend php artisan test
 
 Cobrem os caminhos críticos: custo médio ponderado, lucro, estoque insuficiente (422 + rollback), cancelamento, arredondamento com dízima e produto repetido no payload.
 
+## Frontend (Vue 3)
+
+SPA desacoplada em [`frontend/`](frontend) — Vue 3 (`<script setup>` + TypeScript), Vite, Pinia, Vue Router, Tailwind CSS e axios. Telas: **Visão geral** (dashboard), **Produtos**, **Compras** e **Vendas**, com tema claro/escuro. Consome a API em `VITE_API_URL` (padrão `http://localhost:8000/api`).
+
+Via Docker já sobe junto (`docker compose up --build` → http://localhost:5173). Para rodar localmente sem Docker:
+
+```bash
+cd frontend
+npm install
+npm run dev            # http://localhost:5173
+npm run build          # type-check (vue-tsc) + build de produção
+```
+
+> **Produção:** o `Dockerfile` atual roda o Vite dev server (combina com o `docker-compose`). Para deploy, trocar por um build multi-stage servido por nginx, com `VITE_API_URL` como build-arg (o Vite injeta a variável em tempo de build).
+
 ## Notas
 
-- **Frontend (Vue)**: fase seguinte. O serviço `frontend` já está esboçado (comentado) no `docker-compose.yml` para ser ativado quando o app Vite/Vue existir em `./frontend`.
 - **Auth**: o desafio não pede autenticação; o Sanctum vem do scaffold do Laravel e pode ser ignorado.
 - **CORS**: liberado por padrão para `api/*` (middleware `HandleCors` do Laravel 12) — front desacoplado funciona sem configuração extra em dev.

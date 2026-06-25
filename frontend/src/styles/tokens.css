@@ -1,0 +1,87 @@
+/* Design tokens — hex exatos do handoff (ERP de Estoque). Tema + acento + densidade
+   trocáveis por CSS variables; o Tailwind referencia estas vars em tailwind.config.js. */
+:root {
+  --bg: #f3f5f1;
+  --surface: #ffffff;
+  --surface-2: #f1f4ee;
+  --surface-3: #e9ede5;
+  --text: #1b231f;
+  --text-muted: #5f6b62;
+  --text-faint: #9aa496;
+  --border: #e4e8df;
+  --border-strong: #d3d9cc;
+  --accent: #3f7d5a;
+  --accent-strong: #356a4d;
+  --accent-soft: #e7efe8;
+  --accent-text: #ffffff;
+  --danger: #b1524a;
+  --danger-soft: #f5e6e4;
+  --warn: #9a7531;
+  --warn-soft: #f3ebd9;
+  --shadow-sm: 0 1px 2px rgba(20, 30, 22, 0.04), 0 1px 3px rgba(20, 30, 22, 0.05);
+  --shadow-md: 0 4px 12px rgba(20, 30, 22, 0.06), 0 2px 4px rgba(20, 30, 22, 0.04);
+  --shadow-lg: 0 18px 46px rgba(20, 30, 22, 0.16);
+  --row-py: 13px;
+  --row-px: 18px;
+}
+
+[data-theme='dark'] {
+  --bg: #111513;
+  --surface: #181d1a;
+  --surface-2: #1f2622;
+  --surface-3: #263029;
+  --text: #e7ece7;
+  --text-muted: #9aa49b;
+  --text-faint: #6b756c;
+  --border: #283029;
+  --border-strong: #36403a;
+  --accent: #5fa37a;
+  --accent-strong: #74b78d;
+  --accent-soft: #1d2a22;
+  --accent-text: #0c130f;
+  --danger: #d07d74;
+  --danger-soft: #2b211f;
+  --warn: #c79a5a;
+  --warn-soft: #2a2418;
+  --shadow-sm: none;
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.55);
+}
+
+/* Acentos alternativos (trocáveis via [data-accent]) — padrão é sálvia (:root acima). */
+[data-accent='petroleo'] {
+  --accent: #0f6e74;
+  --accent-strong: #0b585d;
+  --accent-soft: #e0eff0;
+}
+[data-accent='grafite'] {
+  --accent: #3c434a;
+  --accent-strong: #2b3036;
+  --accent-soft: #e9ebee;
+}
+[data-accent='terracota'] {
+  --accent: #b0563a;
+  --accent-strong: #974830;
+  --accent-soft: #f4e6df;
+}
+[data-theme='dark'][data-accent='petroleo'] {
+  --accent: #41a3a9;
+  --accent-strong: #58b4b9;
+  --accent-soft: #15292b;
+}
+[data-theme='dark'][data-accent='grafite'] {
+  --accent: #9aa3ad;
+  --accent-strong: #b3bbc3;
+  --accent-soft: #23282d;
+  --accent-text: #10141a;
+}
+[data-theme='dark'][data-accent='terracota'] {
+  --accent: #d18164;
+  --accent-strong: #dd957a;
+  --accent-soft: #2a1d17;
+}
+
+/* Densidade das tabelas */
+[data-density='compacto'] {
+  --row-py: 7px;
+}

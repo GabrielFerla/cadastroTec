@@ -42,18 +42,18 @@ services:
       timeout: 5s
       retries: 10
 
-  # frontend (fase Vue): ativar quando o app Vite/Vue existir em ./frontend.
-  # Entregará o terceiro serviço exigido pelo desafio ("os dois serviços + banco").
-  # frontend:
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "5173:5173"
-  #   depends_on:
-  #     - backend
-  #   environment:
-  #     VITE_API_URL: http://localhost:8000/api
+  # Frontend Vue 3 (Vite) — terceiro serviço exigido pelo desafio.
+  # O browser chama o backend em http://localhost:8000/api (porta publicada no host).
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    environment:
+      VITE_API_URL: http://localhost:8000/api
 
 volumes:
   mysql_data:

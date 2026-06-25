@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body {
+    margin: 0;
+    height: 100%;
+  }
+
+  body {
+    font-family: 'IBM Plex Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    letter-spacing: -0.003em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  #app {
+    min-height: 100vh;
+  }
+
+  ::placeholder {
+    color: var(--text-faint);
+  }
+
+  button {
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+  }
+
+  input,
+  select {
+    font: inherit;
+    outline: none;
+  }
+}
+
+@layer components {
+  /* Inputs grandes (nome, preço, fornecedor/cliente) — fundo `bg`. */
+  .input {
+    @apply w-full rounded border border-line-strong bg-bg px-3 py-2.5 text-[14px] text-ink;
+  }
+  /* Inputs/selects das linhas de item — fundo `surface`, raio menor. */
+  .input-sm {
+    @apply w-full rounded-lg border border-line-strong bg-surface px-2.5 py-2 text-[13.5px] text-ink;
+  }
+  .input:focus,
+  .input-sm:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+}
