@@ -37,6 +37,20 @@ Isso sobe **MySQL** (cria o schema `erp_estoque`) e o **backend**, que aguarda o
 
 Resetar o banco (apaga o volume): `docker compose down -v`.
 
+### Dados de demonstração (seed)
+
+Para popular o banco com um catálogo, compras e vendas de exemplo (inclui uma venda **cancelada** e custo médio já deslocado por uma segunda compra):
+
+```bash
+# popula sem apagar o que já existe
+docker compose exec backend php artisan db:seed
+
+# ou: zera tudo e popula do zero
+docker compose exec backend php artisan migrate:fresh --seed
+```
+
+O seeder ([DatabaseSeeder](backend/database/seeders/DatabaseSeeder.php)) usa os próprios Services, então estoque, custo médio e lucro saem calculados como em produção. Gera 5 produtos, 2 compras e 4 vendas (3 concluídas + 1 cancelada) — bom para as telas de listagem do front.
+
 ## Endpoints
 
 | Método | Rota | Descrição |
