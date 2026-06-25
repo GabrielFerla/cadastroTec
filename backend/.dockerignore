@@ -1,6 +1,21 @@
 .git
 vendor
 node_modules
-storage/logs/*.log
-database/database.sqlite
 .env
+
+# Banco SQLite de desenvolvimento (os testes usam :memory:).
+database/database.sqlite
+
+# Logs e artefatos compilados/efêmeros do host — regenerados em runtime.
+# Evita, em especial, copiar um bootstrap/cache/config.php (config:cache) com o
+# .env do host, que sobreporia o ambiente injetado no container.
+storage/logs/*.log
+bootstrap/cache/*.php
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/views/*
+
+# Preserva a estrutura de diretórios exigida pelo Laravel em runtime.
+!storage/framework/cache/data/.gitignore
+!storage/framework/sessions/.gitignore
+!storage/framework/views/.gitignore

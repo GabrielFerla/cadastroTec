@@ -11,8 +11,9 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-# Instala dependências no BUILD (camada cacheável; preservada em runtime por um
-# volume anônimo de vendor no docker-compose, mesmo com o bind mount do código).
+# Dependências instaladas no BUILD, em camada cacheável (só recompila quando
+# composer.json/lock mudam). A imagem é self-contained: o código é copiado
+# abaixo via COPY — sem bind mount nem volume de vendor no docker-compose.
 COPY composer.json composer.lock ./
 RUN composer install --no-interaction --no-scripts --no-autoloader --prefer-dist
 
