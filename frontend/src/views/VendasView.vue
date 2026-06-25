@@ -56,7 +56,7 @@ async function cancelar(id: number) {
   />
 
   <div class="px-[30px] pb-10 pt-[26px]">
-    <div class="max-w-[1180px]">
+    <div>
       <div
         v-if="rows.length"
         class="overflow-hidden rounded-card border border-line bg-surface shadow-sm"

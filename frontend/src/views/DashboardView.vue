@@ -50,7 +50,7 @@ const lowStock = computed(() => {
   <AppTopbar />
 
   <div class="px-[30px] pb-10 pt-[26px]">
-    <div v-if="d" class="max-w-[1180px]">
+    <div v-if="d">
       <!-- KPIs -->
       <div class="grid grid-cols-[repeat(auto-fit,minmax(190px,1fr))] gap-4">
         <KpiCard
@@ -139,7 +139,7 @@ const lowStock = computed(() => {
       </div>
     </div>
 
-    <div v-else class="max-w-[1180px] py-20 text-center text-[14px] text-faint">
+    <div v-else class="py-20 text-center text-[14px] text-faint">
       Carregando…
     </div>
   </div>
