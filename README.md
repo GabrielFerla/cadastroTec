@@ -1,6 +1,67 @@
 # ERP de Estoque — API (Laravel 12 + MySQL)
 
-API REST desacoplada para um ERP de estoque: cadastro de **produtos**, registro de **compras** (entrada de estoque + custo médio ponderado) e **vendas** (saída de estoque + cálculo de lucro), com cancelamento de venda. Ambiente totalmente dockerizado (backend + MySQL).
+API REST desacoplada para um ERP de estoque: cadastro de **produtos**, registro de **compras** (entrada de estoque + custo médio ponderado) e **vendas** (saída de estoque + cálculo de lucro), com cancelamento de venda. Ambiente totalmente dockerizado (backend + frontend + MySQL).
+
+## Demonstração
+
+> Telas reais do sistema rodando via `docker compose up` (frontend em Vue 3 + Vite consumindo a API),
+> com os dados do seed. Para reproduzir: siga [Como rodar](#como-rodar) e abra **http://localhost:5173**.
+
+### Visão geral (tela inicial)
+
+KPIs (valor em estoque, faturamento, lucro e margem média), alertas de estoque baixo/zerado e a
+atividade recente (compras com valor negativo, vendas com valor positivo).
+
+![Dashboard — visão geral](docs/screenshots/dashboard.png)
+
+### Produtos
+
+Cadastro com **nome** e **preço de venda sugerido** (o estoque inicia em **0**) e listagem com
+**custo médio**, **preço**, **margem** e **estoque atual** + situação (em estoque / baixo / sem estoque).
+
+![Lista de produtos](docs/screenshots/produtos.png)
+![Cadastro de produto](docs/screenshots/produto-form.png)
+
+### Compras
+
+Entrada de estoque por fornecedor. Ao registrar, o **custo médio ponderado** de cada produto é
+recalculado (o formulário mostra o custo médio atual como referência).
+
+![Lista de compras](docs/screenshots/compras.png)
+![Nova compra](docs/screenshots/compra-form.png)
+
+### Vendas
+
+Saída de estoque com **total e lucro** por venda e **cancelamento** (que reverte o estoque). O
+formulário calcula o **lucro estimado em tempo real** conforme você escolhe produtos e quantidades.
+
+![Lista de vendas (com uma venda cancelada)](docs/screenshots/vendas.png)
+![Nova venda — total e lucro estimado](docs/screenshots/venda-form.png)
+
+### Validação de estoque
+
+Estoque insuficiente é bloqueado tanto no front quanto na API (HTTP **422** com mensagem clara).
+
+![Estoque insuficiente](docs/screenshots/estoque-insuficiente.png)
+
+### Tema escuro
+
+Interface com tema claro/escuro.
+
+![Dashboard — tema escuro](docs/screenshots/dashboard-dark.png)
+
+### Comportamento confirmado (mesmas regras via API)
+
+```text
+POST /api/vendas  (2× Notebook Dell, custo médio 2600, preço 3500)
+  → 201 { "total": 7000, "lucro": 1800, itens:[{ "custo_unitario": 2600 }] }   # lucro = (3500-2600)×2
+
+POST /api/vendas  (quantidade acima do estoque)
+  → 422 { "message": "Estoque insuficiente para o produto \"Notebook Dell\". Disponível: 11, solicitado: 99999." }
+
+POST /api/vendas/{id}/cancelar
+  → 200 { "status": "cancelada" }   # estoque do produto volta de 11 para 13 (+2)
+```
 
 ## Stack
 
@@ -146,7 +207,3 @@ npm run build          # type-check (vue-tsc) + build de produção
 
 > **Produção:** o `Dockerfile` atual roda o Vite dev server (combina com o `docker-compose`). Para deploy, trocar por um build multi-stage servido por nginx, com `VITE_API_URL` como build-arg (o Vite injeta a variável em tempo de build).
 
-## Notas
-
-- **Auth**: o desafio não pede autenticação; o Sanctum vem do scaffold do Laravel e pode ser ignorado.
-- **CORS**: liberado por padrão para `api/*` (middleware `HandleCors` do Laravel 12) — front desacoplado funciona sem configuração extra em dev.
