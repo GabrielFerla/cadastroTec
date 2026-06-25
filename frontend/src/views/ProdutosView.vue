@@ -47,13 +47,14 @@ const rows = computed(() => {
     @primary="ui.openDrawer('novo-produto')"
   />
 
-  <div class="px-[30px] pb-10 pt-[26px]">
+  <div class="px-4 pb-10 pt-5 lg:px-[30px] lg:pt-[26px]">
     <div>
       <div
         v-if="rows.length"
         class="overflow-hidden rounded-card border border-line bg-surface shadow-sm"
       >
-        <table class="w-full border-collapse text-[14px]">
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-[680px] border-collapse text-[14px]">
           <thead>
             <tr class="bg-surface-2">
               <th class="th text-left">Produto</th>
@@ -83,6 +84,7 @@ const rows = computed(() => {
             </tr>
           </tbody>
         </table>
+        </div>
       </div>
 
       <div

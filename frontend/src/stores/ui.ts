@@ -20,6 +20,8 @@ export const useUiStore = defineStore('ui', () => {
   const query = ref('')
   const toast = ref<string | null>(null)
   const drawer = ref<DrawerState | null>(null)
+  // Sidebar off-canvas no mobile (< lg). No desktop a sidebar é sempre visível.
+  const sidebarOpen = ref(false)
 
   let toastTimer: ReturnType<typeof setTimeout> | undefined
 
@@ -71,10 +73,18 @@ export const useUiStore = defineStore('ui', () => {
     drawer.value = null
   }
 
-  // Trocar de tela limpa a busca e fecha qualquer drawer (regra do design).
+  function openSidebar() {
+    sidebarOpen.value = true
+  }
+  function closeSidebar() {
+    sidebarOpen.value = false
+  }
+
+  // Trocar de tela limpa a busca, fecha qualquer drawer e a sidebar mobile (regra do design).
   function resetOnNavigate() {
     query.value = ''
     drawer.value = null
+    sidebarOpen.value = false
   }
 
   function showToast(message: string) {
@@ -92,12 +102,15 @@ export const useUiStore = defineStore('ui', () => {
     query,
     toast,
     drawer,
+    sidebarOpen,
     initTheme,
     toggleTheme,
     setAccent,
     toggleDensity,
     openDrawer,
     closeDrawer,
+    openSidebar,
+    closeSidebar,
     resetOnNavigate,
     showToast,
   }

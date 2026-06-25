@@ -21,8 +21,16 @@ function isActive(to: string) {
 </script>
 
 <template>
+  <!-- Backdrop (apenas mobile, quando aberta) -->
+  <div
+    v-if="ui.sidebarOpen"
+    class="fixed inset-0 z-[54] bg-[rgba(10,18,12,0.38)] lg:hidden"
+    @click="ui.closeSidebar()"
+  />
+
   <aside
-    class="sticky top-0 flex h-screen w-[248px] flex-shrink-0 flex-col border-r border-line bg-surface"
+    class="fixed left-0 top-0 z-[55] flex h-screen w-[248px] flex-shrink-0 flex-col border-r border-line bg-surface transition-transform duration-200 lg:sticky lg:z-auto lg:translate-x-0"
+    :class="ui.sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
   >
     <!-- Marca -->
     <div class="flex items-center gap-[11px] px-5 pb-[18px] pt-[22px]">
@@ -51,6 +59,7 @@ function isActive(to: string) {
             ? 'bg-accent-soft font-semibold text-accent-strong'
             : 'text-muted hover:bg-surface-2 hover:text-ink'
         "
+        @click="ui.closeSidebar()"
       >
         <component :is="item.icon" class="h-[18px] w-[18px]" :stroke-width="1.7" />
         {{ item.label }}

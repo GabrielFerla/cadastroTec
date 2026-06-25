@@ -49,7 +49,7 @@ const lowStock = computed(() => {
 <template>
   <AppTopbar />
 
-  <div class="px-[30px] pb-10 pt-[26px]">
+  <div class="px-4 pb-10 pt-5 lg:px-[30px] lg:pt-[26px]">
     <div v-if="d">
       <!-- KPIs -->
       <div class="grid grid-cols-[repeat(auto-fit,minmax(190px,1fr))] gap-4">
