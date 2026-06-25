@@ -1,0 +1,221 @@
+{
+  "info": {
+    "name": "ERP de Estoque — API",
+    "description": "Coleção da API do desafio (Laravel 12 + MySQL).\n\nBase URL padrão: http://localhost:8000/api (suba o ambiente com `docker compose up --build`).\n\nA variável {{produto_id}} é preenchida automaticamente ao cadastrar um produto, e {{venda_id}} ao registrar uma venda — então dá para rodar as requisições em sequência. Com o banco populado pelo seeder, os produtos de id 1..5 já existem.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8000/api", "type": "string" },
+    { "key": "produto_id", "value": "1", "type": "string" },
+    { "key": "venda_id", "value": "1", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Produtos",
+      "item": [
+        {
+          "name": "Listar produtos",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/produtos",
+              "host": ["{{base_url}}"],
+              "path": ["produtos"]
+            },
+            "description": "Retorna id, nome, custo_medio, preco_venda e estoque atual."
+          }
+        },
+        {
+          "name": "Cadastrar produto",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 201', () => pm.response.to.have.status(201));",
+                  "const res = pm.response.json().data;",
+                  "if (res && res.id) {",
+                  "  pm.collectionVariables.set('produto_id', res.id);",
+                  "  console.log('produto_id =', res.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Produto de Teste\",\n  \"preco_venda\": 99.90\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/produtos",
+              "host": ["{{base_url}}"],
+              "path": ["produtos"]
+            },
+            "description": "nome (obrigatório, mín. 3 caracteres) e preco_venda (positivo). estoque e custo_medio iniciam em 0."
+          }
+        },
+        {
+          "name": "Cadastrar produto (validação inválida → 422)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"AB\",\n  \"preco_venda\": 0\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/produtos",
+              "host": ["{{base_url}}"],
+              "path": ["produtos"]
+            },
+            "description": "Demonstra a resposta 422 (nome curto + preço não positivo)."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Compras",
+      "item": [
+        {
+          "name": "Listar compras",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/compras",
+              "host": ["{{base_url}}"],
+              "path": ["compras"]
+            },
+            "description": "Lista as compras com seus itens."
+          }
+        },
+        {
+          "name": "Registrar compra",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fornecedor\": \"Fornecedor X\",\n  \"produtos\": [\n    { \"id\": 1, \"quantidade\": 10, \"preco_unitario\": 2500 },\n    { \"id\": 2, \"quantidade\": 50, \"preco_unitario\": 30 }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/compras",
+              "host": ["{{base_url}}"],
+              "path": ["compras"]
+            },
+            "description": "Entrada de estoque + atualização do custo médio ponderado. Ajuste os ids para produtos existentes."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Vendas",
+      "item": [
+        {
+          "name": "Listar vendas",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/vendas",
+              "host": ["{{base_url}}"],
+              "path": ["vendas"]
+            },
+            "description": "Lista as vendas (concluídas e canceladas) com itens, total e lucro."
+          }
+        },
+        {
+          "name": "Registrar venda",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 201', () => pm.response.to.have.status(201));",
+                  "const res = pm.response.json().data;",
+                  "if (res && res.id) {",
+                  "  pm.collectionVariables.set('venda_id', res.id);",
+                  "  console.log('venda_id =', res.id, '| total =', res.total, '| lucro =', res.lucro);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cliente\": \"Fulano da Silva\",\n  \"produtos\": [\n    { \"id\": 1, \"quantidade\": 1, \"preco_unitario\": 3500 },\n    { \"id\": 2, \"quantidade\": 2, \"preco_unitario\": 80 }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/vendas",
+              "host": ["{{base_url}}"],
+              "path": ["vendas"]
+            },
+            "description": "Valida estoque de todos os itens, baixa o estoque e retorna total e lucro. O id da venda é salvo em {{venda_id}}."
+          }
+        },
+        {
+          "name": "Cancelar venda",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/vendas/{{venda_id}}/cancelar",
+              "host": ["{{base_url}}"],
+              "path": ["vendas", "{{venda_id}}", "cancelar"]
+            },
+            "description": "Reverte o estoque e marca a venda como cancelada. Só funciona para vendas 'concluida'."
+          }
+        },
+        {
+          "name": "Registrar venda (estoque insuficiente → 422)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cliente\": \"Cliente Teste\",\n  \"produtos\": [\n    { \"id\": 1, \"quantidade\": 999999, \"preco_unitario\": 50 }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/vendas",
+              "host": ["{{base_url}}"],
+              "path": ["vendas"]
+            },
+            "description": "Demonstra a mensagem de erro 'Estoque insuficiente...' (HTTP 422)."
+          }
+        }
+      ]
+    }
+  ]
+}
