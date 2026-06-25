@@ -55,6 +55,7 @@ O seeder ([DatabaseSeeder](backend/database/seeders/DatabaseSeeder.php)) usa os 
 
 | Método | Rota | Descrição |
 |---|---|---|
+| GET | `/api/dashboard` | Visão geral: KPIs, alertas de estoque e atividade recente |
 | POST | `/api/produtos` | Cadastra produto (estoque inicia em 0) |
 | GET | `/api/produtos` | Lista: id, nome, custo_medio, preco_venda, estoque |
 | POST | `/api/compras` | Registra compra (entrada + atualiza custo médio) |
@@ -93,6 +94,24 @@ Estoque insuficiente (`422`):
 ```json
 { "message": "Estoque insuficiente para o produto \"Caneta Azul\". Disponível: 1, solicitado: 2." }
 ```
+
+Dashboard (`GET /api/dashboard?estoque_minimo=10`):
+```json
+{ "data": {
+  "valor_em_estoque": 72688, "unidades_em_estoque": 248,
+  "faturamento": 14310, "lucro": 4778, "margem_media": 33.4,
+  "vendas_concluidas": 4, "alertas_estoque": 2,
+  "estoque_baixo": [
+    { "id": 6, "nome": "Marca-Texto Amarelo", "estoque": 0, "status": "sem_estoque" },
+    { "id": 7, "nome": "Grampeador 26/6", "estoque": 4, "status": "baixo" }
+  ],
+  "atividade_recente": [
+    { "tipo": "venda", "descricao": "Livraria Saber", "valor": 510, "status": "concluida", "data": "..." },
+    { "tipo": "compra", "descricao": "Info Atacado", "valor": -24400, "status": null, "data": "..." }
+  ]
+} }
+```
+> `margem_media` em % (lucro/faturamento). Em `atividade_recente`, venda tem `valor` positivo e compra negativo. `estoque_minimo` é opcional (padrão 10).
 
 ## Regras de negócio
 

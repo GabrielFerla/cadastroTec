@@ -28,6 +28,8 @@ class DatabaseSeeder extends Seeder
             'Teclado Mecânico' => 250,
             'Monitor 24"' => 1200,
             'Cadeira Gamer' => 900,
+            'Marca-Texto Amarelo' => 12,
+            'Grampeador 26/6' => 45,
         ];
 
         $id = [];
@@ -49,6 +51,8 @@ class DatabaseSeeder extends Seeder
                 ['id' => $id['Teclado Mecânico'], 'quantidade' => 50, 'preco_unitario' => 120],
                 ['id' => $id['Monitor 24"'], 'quantidade' => 20, 'preco_unitario' => 800],
                 ['id' => $id['Cadeira Gamer'], 'quantidade' => 15, 'preco_unitario' => 500],
+                ['id' => $id['Marca-Texto Amarelo'], 'quantidade' => 20, 'preco_unitario' => 5],
+                ['id' => $id['Grampeador 26/6'], 'quantidade' => 10, 'preco_unitario' => 22],
             ],
         ]);
 
@@ -83,6 +87,16 @@ class DatabaseSeeder extends Seeder
             'cliente' => 'Ana Costa',
             'produtos' => [
                 ['id' => $id['Cadeira Gamer'], 'quantidade' => 2, 'preco_unitario' => 900],
+            ],
+        ]);
+
+        // Esgota o Marca-Texto (-> sem estoque) e derruba o Grampeador (-> estoque baixo),
+        // para a Visão geral exibir os alertas de estoque.
+        $vendas->registrar([
+            'cliente' => 'Livraria Saber',
+            'produtos' => [
+                ['id' => $id['Marca-Texto Amarelo'], 'quantidade' => 20, 'preco_unitario' => 12],
+                ['id' => $id['Grampeador 26/6'], 'quantidade' => 6, 'preco_unitario' => 45],
             ],
         ]);
 

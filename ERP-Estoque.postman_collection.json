@@ -11,6 +11,24 @@
   ],
   "item": [
     {
+      "name": "Dashboard (visão geral)",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/dashboard?estoque_minimo=10",
+          "host": ["{{base_url}}"],
+          "path": ["dashboard"],
+          "query": [
+            { "key": "estoque_minimo", "value": "10", "description": "Limite p/ considerar estoque baixo (opcional, padrão 10)" }
+          ]
+        },
+        "description": "KPIs (valor em estoque, faturamento, lucro/margem), alertas de estoque baixo e atividade recente (compras + vendas) em uma única chamada."
+      }
+    },
+    {
       "name": "Produtos",
       "item": [
         {
