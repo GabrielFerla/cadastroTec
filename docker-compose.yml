@@ -1,0 +1,59 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    # Sem bind mount do código: a imagem já contém o app (COPY no Dockerfile).
+    # Isso evita vazar o .env/vendor do host para o container e torna o `up` reprodutível.
+    # O entrypoint sincroniza as credenciais de banco abaixo para dentro do .env.
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      # Fonte única das credenciais de banco no container. O entrypoint copia estes
+      # valores para o .env (o `artisan serve` propaga o .env aos workers e ele vence).
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: "3306"
+      DB_DATABASE: erp_estoque
+      DB_USERNAME: erp
+      DB_PASSWORD: secret
+
+  mysql:
+    image: mysql:8.0
+    ports:
+      # Publicado em 3307 no host para não colidir com um MySQL local na 3306.
+      # O backend acessa o banco internamente em mysql:3306 (rede do compose).
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: erp_estoque   # cria o schema no primeiro boot
+      MYSQL_USER: erp
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # frontend (fase Vue): ativar quando o app Vite/Vue existir em ./frontend.
+  # Entregará o terceiro serviço exigido pelo desafio ("os dois serviços + banco").
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "5173:5173"
+  #   depends_on:
+  #     - backend
+  #   environment:
+  #     VITE_API_URL: http://localhost:8000/api
+
+volumes:
+  mysql_data:
